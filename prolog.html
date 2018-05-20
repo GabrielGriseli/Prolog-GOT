@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <title>Prolog - GOT</title>
+    <meta charset="utf-8">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+
+</head>
+
+<body>
+
+    <div class="row">
+        <form class="col s10">
+            <div class="row">
+                <div class="input-field col s2.5">
+                    <select class="browser-default" id="relacao">
+                        <option value="" disabled selected>Selecione sua opção</option>
+                        <option value="1">Filhos(as)</option>
+                        <option value="2">Filhos</option>
+                        <option value="3">Filhas</option>
+                        <option value="3">Pai</option>
+                        <option value="3">Mãe</option>
+                    </select>
+                </div>
+                <div class="input-field col s6">
+                    <input class="validate" type="text" id="nome" onKeyup="changenome();" value="" placeholder="Digite um nome" />
+                </div>
+                <div class="input-field col s2">
+                    <a class="waves-effect waves-light btn" id="pesquisar" onClick="clickButton();">
+                        <i class="material-icons right">search</i>Pesquisar</a>
+                </div>
+            </div>
+            <div><label>Resultado(s)</label></div>
+            <div class="example-resultado col s2.5" id="resultado"></div>
+        </form>
+    </div>
+
+    <div class="row">
+
+    </div>
+
+    <div class="example-resultado" id="teste"></div>
+
+    <!--**********************************************************************************************************-->
+    <script type="text/javascript" src="got.js"></script>
+    <script type="text/javascript" src="tau-prolog.js"></script>
+    <script>
+
+        /** LIKES */
+
+        // Callback function
+        function show(nome) {
+            // Get output container
+            var resultado = document.getElementById("resultado");
+            // Return callback function
+            return function (answer) {
+                // Valid answer
+                if (pl.type.is_substitution(answer)) {
+                    // Get the value of the food
+                    var food = answer.lookup("X");
+                    food = food.id.replace(/_/g, ' ').toLowerCase();
+                    // Get the person
+                    var person = nome != "Y" ? nome : answer.lookup("Y");
+                    // Show answer
+                    resultado.innerHTML = resultado.innerHTML + "<div>" + food + "</div>";
+                }
+            };
+        }
+
+        // Show the parent of a person
+        function parent(nome) {
+            // Create session
+            var session = pl.create(1000);
+            // Get program
+            var program = regras(); //pega as regras definidas em got.js
+            // Clear output
+            document.getElementById("resultado").innerHTML = "";
+            // Consult program
+            session.consult(program);
+            // Query goal
+            session.query("parent(" + nome + ", X).");
+            // Find answers
+            session.answers(show(nome), 1000);
+        }
+
+        /** EVENTS */
+
+        // onClick #button
+        function clickButton() {
+            // Get person
+            var nome = document.getElementById("nome").value;
+            nome = nome.replace(/ /g, '_').toLowerCase();  //troca os espaços por _ para usar na busca
+
+            nome = nome != "" ? nome : "Y";
+            // Get parent
+            parent(nome);
+        }
+
+    </script>
+</body>
+
+</html>
