@@ -99,8 +99,12 @@
             nome = nome.replace(/ /g, '_').toLowerCase();  //troca os espaços por _ para usar na busca
 
             nome = nome != "" ? nome : "Y";
-            // Get parent
-            parent(nome);
+
+            var e = document.getElementById("relacao");
+            e = e.options[e.selectedIndex].text;
+
+            if(e === "Filhos(as)")
+                parent(nome);
         }
 
     </script>
